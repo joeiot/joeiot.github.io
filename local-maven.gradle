@@ -1,0 +1,44 @@
+apply plugin: 'com.jfrog.artifactory'
+apply plugin: 'maven-publish'
+
+publishing {
+    publications {
+        aar(MavenPublication) {
+            groupId = "${package_name}"
+            artifactId artifactGroup
+            version =  artifactVersion
+            artifact artifactFilePath
+            // 将 generateSourcesJar Task 生成的 sources.jar 也一并上传,只有预览版本上传源码
+            if(version.endsWith('SNAPSHOT') || version.endsWith('snapshot')){
+                artifact generateSourcesJar
+            }
+        }
+    }
+}
+artifactory {
+    contextUrl  = "${artifactory_contextUrl}"
+    publish {
+        repository {
+            // The Artifactory repository key to publish to
+            repoKey = (artifactVersion.endsWith('SNAPSHOT') || artifactVersion.endsWith('snapshot'))  ? 'mg-app-libs-snapshot' : 'mg-app-libs-release'
+            username = "${artifactory_user}" // The publisher user name
+            password = "${artifactory_password}" // The publisher password
+            maven = true
+        }
+        defaults {
+            publishArtifacts = true
+            publications('aar')
+            publishPom = true //Publish generated POM files to Artifactory (true by default)
+            publishIvy = false //Publish generated Ivy descriptor files to Artifactory (true by default)
+        }
+    }
+    resolve {
+        repository {
+            repoKey = 'jcenter'
+            username = "${artifactory_user}" // The resolver user name
+            password = "${artifactory_password}" // The resolver password
+        }
+    }
+}
+
+

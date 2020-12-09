@@ -1,9 +1,9 @@
 package com.arasthel.spannedgridlayoutmanager.sample
 
 import android.graphics.Color
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 
 /**
  * Created by Jorge Martín on 24/5/17.

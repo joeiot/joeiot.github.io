@@ -8,11 +8,11 @@ import android.graphics.PointF
 import android.graphics.Rect
 import android.os.Parcel
 import android.os.Parcelable
-import android.support.v7.widget.LinearSmoothScroller
-import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.util.SparseArray
 import android.view.View
+import androidx.recyclerview.widget.LinearSmoothScroller
+import androidx.recyclerview.widget.RecyclerView
 
 /**
  * A [android.support.v7.widget.RecyclerView.LayoutManager] which layouts and orders its views
