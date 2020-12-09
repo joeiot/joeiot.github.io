@@ -37,7 +37,7 @@ class GridItemAdapter: RecyclerView.Adapter<GridItemViewHolder>() {
     }
 
     override fun getItemViewType(position: Int): Int {
-        return position
+        return position % 4
     }
 
     override fun getItemCount(): Int {

@@ -41,11 +41,11 @@ class MainActivity: AppCompatActivity() {
 //            } else {
 //                SpanSize(1, 1)
 //            }
-             if(position % 3 == 0){
+             if(position % 4 == 0){
                  SpanSize(1, 2)
-             }else  if(position % 3 == 1){
+             }else  if(position % 4 == 1){
                  SpanSize(2, 1)
-             }else  if(position % 3 == 2){
+             }else  if(position % 4 == 2){
                  SpanSize(2, 2)
              }else{
                  SpanSize(1, 1)
