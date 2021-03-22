@@ -1,0 +1,43 @@
+apply plugin: 'com.android.library'
+
+ext {
+
+    package_name = 'org.lucasr.twowayview'
+    artifactVersion = '1.0.0_2020_12_15_1_SNAPSHOT'//release包发布的版本
+    artifactGroup = "layouts"
+    artifactFilePath = "${project.buildDir}/outputs/aar/${project.name}-" +
+            "${(artifactVersion.endsWith('SNAPSHOT') || artifactVersion.endsWith('snapshot')) ? 'debug' : 'release'}.aar"
+}
+android {
+    compileSdkVersion 28
+    buildToolsVersion "28.0.2"
+    resourcePrefix 'twowayview_'
+
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 28
+    }
+}
+
+task generateSourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier 'sources'
+}
+
+afterEvaluate {
+    if(!artifactVersion.endsWith('SNAPSHOT') && !artifactVersion.endsWith('snapshot')){
+        tasks.matching {
+            (it.name.endsWith('artifactoryPublish'))
+        }.each { tk ->
+            tk.dependsOn('assembleRelease', 'generateSourcesJar')
+        }
+    }
+}
+
+dependencies {
+    implementation project(':core')
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+}
+
+//apply from: "${rootDir}/gradle/scripts/gradle-mvn-push.gradle"
+apply from: '../local-maven.gradle'

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SeekBarVertical">
+        <!--  最大进度-->
+        <attr format="float" name="maxProgressValue"/>
+        <!--  最小进度-->
+        <attr format="float" name="minProgressValue"/>
+        <!--  进度条背景色-->
+        <attr format="color" name="progressBackgroundColor"/>
+        <!--  进度条颜色-->
+        <attr format="color" name="progressColor"/>
+        <!--  进度条颜色-->
+        <attr format="color" name="progressStartColor"/>
+        <!--  进度条颜色-->
+        <attr format="color" name="progressEndColor"/>
+        <!--  背景开始颜色-->
+        <attr format="color" name="backgroundStartColor"/>
+        <!--  背景结束颜色-->
+        <attr format="color" name="backgroundEndColor"/>
+
+        <!--  进度条图片-->
+        <attr format="reference" name="progressBackground"/>
+        <!-- 圆角半径-->
+        <attr format="dimension" name="roundRadius"/>
+        <!-- 拖动条图片-->
+        <attr format="reference" name="thumbBarDrawable"/>
+        <!-- 进度条图片-->
+        <attr format="reference" name="progressBarDrawable"/>
+        <!-- 当前进度-->
+        <attr format="float" name="progressValue"/>
+
+        <!-- 默认拉手圆矩形距进度条活动边界的距离-->
+        <attr format="integer" name="thumbMarginProgress"/>
+        <!-- 默认拉手圆矩形宽度-->
+        <attr format="integer" name="thumbWidth"/>
+        <!-- 默认拉手圆矩形高度-->
+        <attr format="integer" name="thumbHeight"/>
+        <!-- 默认拉手圆矩形圆弧半径-->
+        <attr format="integer" name="thumbRadius"/>
+        <!--  把手颜色-->
+        <attr format="color" name="thumbColor"/>
+        <!-- 底部不可拖动区域-->
+        <attr format="integer" name="canNotDragMargin"/>
+        <!-- 是否从底部开始拖动-->
+        <attr format="boolean" name="isProgressReverse"/>
+        <!-- 是否能拖动，主要类似普通灯类型不需要拖动，可以直接设置个onclick点击事件-->
+        <attr format="boolean" name="isDragEnable"/>
+        <!-- 精度是否为0.5-->
+        <attr format="boolean" name="isPointFiveStep"/>
+        <!-- 是否为垂直显示-->
+        <attr format="boolean" name="isVertical"/>
+    </declare-styleable>
+    <declare-styleable name="SpannedGridLayoutManager">
+        <attr name="android:orientation" />
+        <attr name="spanCount" />
+        <attr name="aspectRatio" format="string" />
+    </declare-styleable>
+</resources>

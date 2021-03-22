@@ -2,11 +2,10 @@ package com.arasthel.spannedgridlayoutmanager.sample
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.arasthel.spannedgridlayoutmanager.SpanSize
 import com.arasthel.spannedgridlayoutmanager.SpannedGridLayoutManager
-import com.arasthel.spannedgridlayoutmanager.SpannedGridLayoutManager.Orientation.*
-import kotlin.random.Random
 
 /**
  * Created by Jorge Martín on 24/5/17.
@@ -14,18 +13,20 @@ import kotlin.random.Random
 class MainActivity: AppCompatActivity() {
 
     val recyclerview: RecyclerView by lazy { findViewById<RecyclerView>(R.id.recyclerView) }
+    private var mItemTouchHelper:ItemTouchHelper? = null
 
     override fun onCreate(savedInstanceState: android.os.Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_main)
 
-        val spannedGridLayoutManager = SpannedGridLayoutManager(orientation = HORIZONTAL, spans = 2)
-        spannedGridLayoutManager.itemOrderIsStable = true
+        val spannedGridLayoutManager = SpannedGridLayoutManager(this,orient = RecyclerView.HORIZONTAL, spans = 2)
+        spannedGridLayoutManager.itemOrderIsStable = false
 
+        recyclerview.itemAnimator = null
         recyclerview.layoutManager = spannedGridLayoutManager
 
-        recyclerview.addItemDecoration(SpaceItemDecorator(left = 10, top = 10, right = 10, bottom = 10))
+        recyclerview.addItemDecoration(SpaceItemDecorator(left = 12, top = 12, right = 12, bottom = 12))
 
         val adapter = GridItemAdapter()
 
@@ -36,22 +37,33 @@ class MainActivity: AppCompatActivity() {
         }
 
         spannedGridLayoutManager.spanSizeLookup = SpannedGridLayoutManager.SpanSizeLookup { position ->
-//            if (adapter.clickedItems[position]) {
-//                SpanSize(Random.nextInt(adapter.itemCount)%3 + 1, Random.nextInt(adapter.itemCount)%3 + 1)
-//            } else {
-//                SpanSize(1, 1)
-//            }
-             if(position % 4 == 0){
-                 SpanSize(1, 2)
-             }else  if(position % 4 == 1){
-                 SpanSize(2, 1)
-             }else  if(position % 4 == 2){
-                 SpanSize(2, 2)
-             }else{
+              if(position % 3 == 0){
                  SpanSize(1, 1)
+             }else  if(position % 3 == 1){
+                 SpanSize(1, 2)
+             }else{
+                 SpanSize(2, 1)
              }
+        }?.also {
+            it.usesCache = true
         }
-
+        val dragFlags = ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+        mItemTouchHelper =   ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(dragFlags, 0) {
+            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
+                val fromPosition = viewHolder.adapterPosition
+                val toPosition = target.adapterPosition
+                return if(fromPosition > -1 && toPosition > -1 && fromPosition < recyclerview.adapter?.itemCount ?: 0 && toPosition < recyclerview.adapter?.itemCount ?: 0){
+                    adapter.swap(fromPosition,toPosition)
+                    true
+                }else{
+                    false
+                }
+            }
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+            }
+        })
+        mItemTouchHelper?.attachToRecyclerView(recyclerview)
+        adapter.setItemTouchHelper(mItemTouchHelper)
         recyclerview.adapter = adapter
     }
 
