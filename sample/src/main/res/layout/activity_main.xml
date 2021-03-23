@@ -5,17 +5,19 @@
     android:layout_height="match_parent"
     tools:context="com.arasthel.spannedgridlayoutmanager.sample.MainActivity">
 
+<!--    android:paddingLeft="@dimen/margin80"-->
+<!--    android:paddingRight="@dimen/margin80"-->
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:paddingTop="@dimen/margin8"
+        android:paddingBottom="@dimen/margin96"
+        android:overScrollMode="never"
         android:scrollbars="horizontal"
-        android:scrollbarAlwaysDrawHorizontalTrack="true"
         android:scrollbarStyle="outsideOverlay"
         android:scrollbarThumbHorizontal="@drawable/scrollbar_indicator"
-        android:layout_gravity="center"
-        android:clipToPadding="false"/>
-
+        />
 
 </FrameLayout>

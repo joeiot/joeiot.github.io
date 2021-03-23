@@ -27,8 +27,8 @@ class GridItemAdapter: RecyclerView.Adapter<GridItemViewHolder>() {
     init {
         clickedItems = MutableList(itemCount, { false })
         setHasStableIds(true)
-        mItems = ArrayList<Int>(50)
-        for (i in 0 until 50) {
+        mItems = ArrayList<Int>(51)
+        for (i in 0 until 51) {
             addItem(i)
         }
     }
@@ -47,13 +47,16 @@ class GridItemAdapter: RecyclerView.Adapter<GridItemViewHolder>() {
        return  mItems?.get(position)?.hashCode()?.toLong()?:0L
     }
 
+    fun getItem(position: Int):Long{
+        return mItems?.get(position)?.toLong()?:0L
+    }
+
     val colors = arrayOf(Color.RED, Color.GREEN, Color.BLUE, Color.CYAN, Color.DKGRAY, Color.MAGENTA, Color.YELLOW)
     private var animation:Runnable?  = null
 
-
     override fun onBindViewHolder(holder: GridItemViewHolder, position: Int) {
         var itemView = holder.itemView
-        (itemView?.findViewById<TextView>(R.id.title))?.text  = ("${mItems?.get(position)}")
+        (itemView?.findViewById<TextView>(R.id.title))?.text  = ("pos={$position} = ${mItems?.get(position)}")
 
         (itemView?.findViewById<ConstraintLayout>(R.id.linear))?.setOnClickListener {
             (itemView?.findViewById<ProgressBar>(R.id.progressbar))?.visibility = View.VISIBLE
@@ -81,28 +84,6 @@ class GridItemAdapter: RecyclerView.Adapter<GridItemViewHolder>() {
             clickedItems[position] = !clickedItems[position]
             notifyItemChanged(position)
         }
-        val lp = itemView.layoutParams
-        if(lp is SpannableGridLayoutManager.LayoutParams){
-            if(position % 3 == 0){
-                SpanSize(1, 1)
-            }else  if(position % 3 == 1){
-                SpanSize(1, 2)
-            }else{
-                SpanSize(2, 1)
-            }
-
-            val span1 = if ((position % 3) == 2) 2 else 1
-            val span2 = if ((position % 3) == 1) 2 else 1
-
-            val colSpan = if (isVertical) span2 else span1
-            val rowSpan = if (isVertical) span1 else span2
-
-            if (lp.rowSpan != rowSpan || lp.colSpan != colSpan) {
-                lp.rowSpan = rowSpan
-                lp.colSpan = colSpan
-                itemView.setLayoutParams(lp)
-            }
-        }
     }
 
 
@@ -113,7 +94,13 @@ class GridItemAdapter: RecyclerView.Adapter<GridItemViewHolder>() {
     }
 
     override fun getItemViewType(position: Int): Int {
-        return position % 3
+//        return if(position == itemCount -1){
+//            1
+//        }else{
+//            0
+//        }
+//        return 0
+        return getItem(position).toInt() % 3
     }
 
     override fun getItemCount(): Int {
@@ -122,11 +109,16 @@ class GridItemAdapter: RecyclerView.Adapter<GridItemViewHolder>() {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GridItemViewHolder {
-        var layout = when (viewType) {
-            0 -> R.layout.grid_item_normal
-            1 -> R.layout.grid_item_normal_1_2
-            else -> R.layout.grid_item_normal_2_1
-        }
+       var layout = when (viewType) {
+           0 -> R.layout.grid_item_normal
+           1 -> R.layout.grid_item_normal_1_2
+           else -> R.layout.grid_item_normal_2_1
+      }
+
+//        var layout = when (viewType) {
+//            0 -> R.layout.grid_item_normal
+//            else -> R.layout.grid_item_normal_2_1
+//        }
         val gridItemView =  LayoutInflater.from(parent.context).inflate(layout, parent, false)
         var layoutParam = gridItemView.layoutParams
         gridItemView.layoutParams = layoutParam

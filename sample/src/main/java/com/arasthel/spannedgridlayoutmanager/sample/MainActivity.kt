@@ -1,6 +1,7 @@
 package com.arasthel.spannedgridlayoutmanager.sample
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -20,7 +21,7 @@ class MainActivity: AppCompatActivity() {
 
         setContentView(R.layout.activity_main)
 
-        val spannedGridLayoutManager = SpannedGridLayoutManager(this,orient = RecyclerView.HORIZONTAL, spans =3,ratio = 0.8f)
+        val spannedGridLayoutManager = SpannedGridLayoutManager(this,orient = RecyclerView.HORIZONTAL, spans =2,ratio = 0.8f)
         spannedGridLayoutManager.itemOrderIsStable = false
 
         recyclerview.itemAnimator = null
@@ -38,15 +39,27 @@ class MainActivity: AppCompatActivity() {
         }
 
         spannedGridLayoutManager.spanSizeLookup = SpannedGridLayoutManager.SpanSizeLookup { position ->
-              if(position % 3 == 0){
+//                if(position == adapter.itemCount -1){
+//                    SpanSize(2, 2)
+//                }else{
+//                    SpanSize(1, 1)
+//                }
+//            SpanSize(1, 1)
+              var d = adapter.getItem(position).toInt()
+               if(d == 50){
+                   Log.d("xxx","")
+               }
+              if(d%3 == 0){
                  SpanSize(1, 1)
-             }else  if(position % 3 == 1){
+             }else  if(d % 3 == 1){
                  SpanSize(1, 2)
-             }else{
+             }else if(d % 3 == 2){
                  SpanSize(2, 1)
-             }
+             }else{
+                  SpanSize(2, 2)
+              }
         }?.also {
-            it.usesCache = true
+            it.usesCache = false
         }
         val dragFlags = ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
         mItemTouchHelper =   ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(dragFlags, 0) {
@@ -54,6 +67,7 @@ class MainActivity: AppCompatActivity() {
                 val fromPosition = viewHolder.adapterPosition
                 val toPosition = target.adapterPosition
                 return if(fromPosition > -1 && toPosition > -1 && fromPosition < recyclerview.adapter?.itemCount ?: 0 && toPosition < recyclerview.adapter?.itemCount ?: 0){
+
                     adapter.swap(fromPosition,toPosition)
                     true
                 }else{
