@@ -14,8 +14,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/linear"
-        android:layout_width="@dimen/margin192"
-        android:layout_height="@dimen/margin240"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:paddingTop="19dp"
         android:paddingBottom="25dp"
         >
@@ -43,6 +43,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintVertical_bias="0.57"
             >
+
             <ImageView
                 android:id="@+id/iv_dev"
                 android:layout_width="@dimen/margin80"
@@ -51,6 +52,7 @@
                 android:src="@drawable/ic_light_normal_on"
                 tools:src="@drawable/ic_light_normal_on"
                 />
+
             <ProgressBar
                 android:id="@+id/progressbar"
                 android:layout_centerHorizontal="true"

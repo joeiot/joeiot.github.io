@@ -20,7 +20,7 @@ class MainActivity: AppCompatActivity() {
 
         setContentView(R.layout.activity_main)
 
-        val spannedGridLayoutManager = SpannedGridLayoutManager(this,orient = RecyclerView.HORIZONTAL, spans = 2)
+        val spannedGridLayoutManager = SpannedGridLayoutManager(this,orient = RecyclerView.HORIZONTAL, spans =3,ratio = 0.8f)
         spannedGridLayoutManager.itemOrderIsStable = false
 
         recyclerview.itemAnimator = null
@@ -29,6 +29,7 @@ class MainActivity: AppCompatActivity() {
         recyclerview.addItemDecoration(SpaceItemDecorator(left = 12, top = 12, right = 12, bottom = 12))
 
         val adapter = GridItemAdapter()
+        adapter.setHasStableIds(true)
 
         if (savedInstanceState != null && savedInstanceState.containsKey("clicked")) {
             val clicked = savedInstanceState.getBooleanArray("clicked")!!

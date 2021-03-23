@@ -44,7 +44,7 @@ class GridItemAdapter: RecyclerView.Adapter<GridItemViewHolder>() {
     }
 
     override fun getItemId(position: Int): Long {
-        return position.toLong()
+       return  mItems?.get(position)?.hashCode()?.toLong()?:0L
     }
 
     val colors = arrayOf(Color.RED, Color.GREEN, Color.BLUE, Color.CYAN, Color.DKGRAY, Color.MAGENTA, Color.YELLOW)
@@ -105,6 +105,7 @@ class GridItemAdapter: RecyclerView.Adapter<GridItemViewHolder>() {
         }
     }
 
+
     fun  swap(fromPos:Int,toPos:Int)
     {
         Collections.swap(mItems,fromPos,toPos)
@@ -118,6 +119,7 @@ class GridItemAdapter: RecyclerView.Adapter<GridItemViewHolder>() {
     override fun getItemCount(): Int {
         return mItems?.size?:0
     }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GridItemViewHolder {
         var layout = when (viewType) {
