@@ -165,6 +165,7 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
         if (spans < 1) {
             throw InvalidMaxSpansException(spans)
         }
+        ensureRectsHelper()
     }
 
 
@@ -222,8 +223,6 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
 
     override fun onLayoutChildren(recycler: RecyclerView.Recycler, state: RecyclerView.State) {
 
-        ensureRectsHelper()
-
         layoutStart = getPaddingStartForOrientation()
 
         layoutEnd = if (scroll != 0) {
@@ -251,7 +250,7 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
 
         if (DEBUG) {
             val elapsed = System.currentTimeMillis() - start
-            debugLog("Elapsed time: $elapsed ms")
+            debugLog("Span cached,Elapsed time: $elapsed ms")
         }
 
         // Restore scroll position based on first visible view
@@ -277,7 +276,14 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
         val curPositions = (0 until childCount).map { getPosition(getChildAt(it)!!) }
         val isLastItemInScreen = curPositions.contains(itemCount - 1)
         val allItemsInScreen = itemCount == 0 || (firstVisiblePosition == 0 && isLastItemInScreen)
+        if(DEBUG)
+        {
+            debugLog("onLayoutChildren,size:$size,scroll:$scroll,layoutEnd:$layoutEnd  overScroll:$overScroll" +
+                    "childCount:$childCount isLastItemInScreen:$isLastItemInScreen " +
+                    "allItemsInScreen:$allItemsInScreen")
+        }
         if (!allItemsInScreen && overScroll > 0) {
+//         if (!allItemsInScreen) {
             // If we are, fix it
             scrollBy(overScroll, state)
 
@@ -319,7 +325,7 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
         rect?:return
 
         if(DEBUG) {
-            debugLog("position = $position,$spanSize \r\n" +
+            debugLog("measureChild,position = $position,$spanSize \r\n" +
                     "$rect isItemChanged = ${layout.isItemChanged} " +
                     "isViewInvalid = ${layout.isViewInvalid} " +
                     "isItemRemoved = ${layout.isItemRemoved} " +
@@ -383,12 +389,12 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
      */
     protected open fun makeAndAddView(position: Int, direction: Direction, recycler: RecyclerView.Recycler): View {
         val view = makeView(position, direction, recycler)
+        measureChild(position, view)
         if (direction == Direction.END) {
             addView(view)
         } else {
             addView(view, 0)
         }
-        measureChild(position, view)
         layoutChild(position, view)
         return view
     }
@@ -413,6 +419,11 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
         val newLayoutEnd = childStart + (viewEnd - viewStart)
         if (newLayoutEnd > layoutEnd) {
             layoutEnd = newLayoutEnd
+        }
+
+        if(DEBUG)
+        {
+            debugLog("updateEdgesWithNewChild,layoutStart:$layoutStart layoutEnd:$layoutEnd")
         }
     }
 
@@ -449,6 +460,10 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
             }
         }
 
+        if(DEBUG){
+            debugLog("recycleChildrenFromStart count:${toDetach.size}")
+        }
+
         for (child in toDetach) {
             removeAndRecycleView(child, recycler)
             updateEdgesWithRemovedChild(child, direction)
@@ -473,6 +488,10 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
             }
         }
 
+        if(DEBUG){
+            debugLog("recycleChildrenFromEnd count:${toDetach.size}")
+        }
+
         for (child in toDetach) {
             removeAndRecycleView(child, recycler)
             updateEdgesWithRemovedChild(child, direction)
@@ -490,6 +509,11 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
             layoutStart = getPaddingStartForOrientation() + childEnd
         } else if (direction == Direction.START) { // Removed from end
             layoutEnd = getPaddingStartForOrientation() + childStart
+        }
+
+        if(DEBUG)
+        {
+            debugLog("updateEdgesWithRemovedChild,layoutStart:$layoutStart layoutEnd:$layoutEnd")
         }
     }
 
@@ -594,6 +618,10 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
         if (scroll + size > end && (firstVisiblePosition + childCount + spans) >= state.itemCount) {
             correctedDistance -= (end - scroll - size)
             scroll = end - size
+        }
+
+        if(DEBUG){
+            debugLog("isVertical:${orientation == RecyclerView.VERTICAL}  offsetChildren:$correctedDistance")
         }
 
         if (orientation == RecyclerView.VERTICAL) {
@@ -809,7 +837,7 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
 
     companion object {
         const val TAG = "SpannedGridLayoutMan"
-        const val DEBUG = false
+        const val DEBUG = true
 
         fun debugLog(message: String) {
             if (DEBUG) Log.d(TAG, message)

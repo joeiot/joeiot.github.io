@@ -30,7 +30,7 @@ class MainActivity: AppCompatActivity() {
         recyclerview.addItemDecoration(SpaceItemDecorator(left = 12, top = 12, right = 12, bottom = 12))
 
         val adapter = GridItemAdapter()
-        adapter.setHasStableIds(true)
+        adapter.setHasStableIds(false)
 
         if (savedInstanceState != null && savedInstanceState.containsKey("clicked")) {
             val clicked = savedInstanceState.getBooleanArray("clicked")!!

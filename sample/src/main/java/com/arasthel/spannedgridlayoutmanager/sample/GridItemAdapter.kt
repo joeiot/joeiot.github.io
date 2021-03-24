@@ -27,8 +27,8 @@ class GridItemAdapter: RecyclerView.Adapter<GridItemViewHolder>() {
     init {
         clickedItems = MutableList(itemCount, { false })
         setHasStableIds(true)
-        mItems = ArrayList<Int>(51)
-        for (i in 0 until 51) {
+        mItems = ArrayList<Int>(2)
+        for (i in 0 until 10) {
             addItem(i)
         }
     }
@@ -99,7 +99,7 @@ class GridItemAdapter: RecyclerView.Adapter<GridItemViewHolder>() {
 //        }else{
 //            0
 //        }
-//        return 0
+//        return position
         return getItem(position).toInt() % 3
     }
 
