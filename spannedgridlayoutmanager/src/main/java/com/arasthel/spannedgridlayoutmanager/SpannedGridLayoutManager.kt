@@ -116,8 +116,7 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
      */
     open class SpanSizeLookup(
             /** Used to provide an SpanSize for each item. */
-            var lookupFunction: ((Int) -> SpanSize)? = null
-    ) {
+            var lookupFunction: ((Int) -> SpanSize)? = null) {
 
         private var cache = SparseArray<SpanSize>()
 
@@ -153,7 +152,7 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
             return SpanSize(1, 1)
         }
 
-        fun invalidateCache() {
+        fun invalidateSpanIndexCache() {
             cache.clear()
         }
     }
@@ -166,6 +165,33 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
         if (spans < 1) {
             throw InvalidMaxSpansException(spans)
         }
+    }
+
+
+    override fun onItemsAdded(recyclerView: RecyclerView, positionStart: Int, itemCount: Int) {
+        spanSizeLookup?.invalidateSpanIndexCache()
+        rectsHelper.invalidateRectPositionCache()
+    }
+
+    override fun onItemsChanged(recyclerView: RecyclerView) {
+        spanSizeLookup?.invalidateSpanIndexCache()
+        rectsHelper.invalidateRectPositionCache()
+    }
+
+    override fun onItemsRemoved(recyclerView: RecyclerView, positionStart: Int, itemCount: Int) {
+        spanSizeLookup?.invalidateSpanIndexCache()
+        rectsHelper.invalidateRectPositionCache()
+    }
+
+    override fun onItemsUpdated(recyclerView: RecyclerView, positionStart: Int, itemCount: Int,
+                            payload: Any?) {
+        spanSizeLookup?.invalidateSpanIndexCache()
+        rectsHelper.invalidateRectPositionCache()
+    }
+
+    override fun onItemsMoved(recyclerView: RecyclerView, from: Int, to: Int, itemCount: Int) {
+        spanSizeLookup?.invalidateSpanIndexCache()
+        rectsHelper.invalidateRectPositionCache()
     }
 
     //==============================================================================================
@@ -185,7 +211,9 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
     }
 
     private fun ensureRectsHelper(){
-        rectsHelper = RectsHelper(this, orientation, ratio)
+        if(!this::rectsHelper.isInitialized){
+            rectsHelper = RectsHelper(this, orientation, ratio)
+        }
     }
 
     //==============================================================================================
@@ -215,8 +243,10 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
 
         for (i in 0 until state.itemCount) {
             val spanSize = spanSizeLookup?.getSpanSize(i) ?: SpanSize(1, 1)
-            val childRect = rectsHelper.findRect(i, spanSize)
-            rectsHelper.pushRect(i, childRect)
+            var childRect = rectsHelper.findRect(i, spanSize)
+            childRect?.apply {
+                rectsHelper.pushRect(i, childRect)
+            }?:break
         }
 
         if (DEBUG) {
@@ -284,8 +314,19 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
 
        var layout = (view.layoutParams as RecyclerView.LayoutParams)
         // This rect contains just the row and column number - i.e.: [0, 0, 1, 1]
-        val rect = freeRectsHelper.findRect(position, spanSize)
+        var rect = freeRectsHelper.findRect(position, spanSize)
 
+        rect?:return
+
+        if(DEBUG) {
+            debugLog("position = $position,$spanSize \r\n" +
+                    "$rect isItemChanged = ${layout.isItemChanged} " +
+                    "isViewInvalid = ${layout.isViewInvalid} " +
+                    "isItemRemoved = ${layout.isItemRemoved} " +
+                    "viewLayoutPosition = ${layout.viewLayoutPosition} " +
+                    "viewAdapterPosition = ${layout.viewAdapterPosition} "
+            )
+        }
         // Multiply the rect for item width and height to get positions
         val left = rect.left * itemWidth
         val right = rect.right * itemWidth
@@ -873,6 +914,25 @@ open class RectsHelper(val layoutManager: SpannedGridLayoutManager,
 
     val itemWidth:  Int get() = if(orientation == RecyclerView.HORIZONTAL) (cellSize*ratio).toInt()  else cellSize
 
+    init {
+        initFreeRect()
+    }
+
+    private fun initFreeRect(){
+        // There will always be a free rect that goes to Int.MAX_VALUE
+        val initialFreeRect = if (orientation == RecyclerView.VERTICAL) {
+            Rect(0, 0, layoutManager.spans, Int.MAX_VALUE)
+        } else {
+            Rect(0, 0, Int.MAX_VALUE, layoutManager.spans)
+        }
+        freeRects.add(initialFreeRect)
+    }
+
+    fun invalidateRectPositionCache(){
+        rectsCache.clear()
+        freeRects.clear()
+        initFreeRect()
+    }
     /**
      * Start row/column for free rects
      */
@@ -895,33 +955,26 @@ open class RectsHelper(val layoutManager: SpannedGridLayoutManager,
         }
     }
 
-    init {
-        // There will always be a free rect that goes to Int.MAX_VALUE
-        val initialFreeRect = if (orientation == RecyclerView.VERTICAL) {
-            Rect(0, 0, layoutManager.spans, Int.MAX_VALUE)
-        } else {
-            Rect(0, 0, Int.MAX_VALUE, layoutManager.spans)
-        }
-        freeRects.add(initialFreeRect)
-    }
 
     /**
      * Get a free rect for the given span and item position
      */
-    fun findRect(position: Int, spanSize: SpanSize): Rect {
+    fun findRect(position: Int, spanSize: SpanSize): Rect? {
         return rectsCache[position] ?:findRectForSpanSize(spanSize)
     }
 
     /**
      * Find a valid free rect for the given span size
      */
-    protected open fun findRectForSpanSize(spanSize: SpanSize): Rect {
-        val lane = freeRects.first {
+    protected open fun findRectForSpanSize(spanSize: SpanSize): Rect? {
+        var lane = freeRects.firstOrNull() {
             val itemRect = Rect(it.left, it.top, it.left + spanSize.width, it.top + spanSize.height)
             it.contains(itemRect)
         }
 
-        return Rect(lane.left, lane.top, lane.left + spanSize.width, lane.top + spanSize.height)
+        return lane?.let { lane ->
+            Rect(lane.left, lane.top, lane.left + spanSize.width, lane.top + spanSize.height)
+        }
     }
 
     /**
@@ -1003,6 +1056,6 @@ open class RectsHelper(val layoutManager: SpannedGridLayoutManager,
  */
 class SpanSize(val width: Int, val height: Int){
     override fun toString(): String {
-        return "SpanSize(width=$width, height=$height)"
+        return "{width:$width, height:$height}"
     }
 }

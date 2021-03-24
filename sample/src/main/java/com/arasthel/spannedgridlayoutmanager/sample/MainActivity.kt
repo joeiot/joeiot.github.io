@@ -22,7 +22,7 @@ class MainActivity: AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val spannedGridLayoutManager = SpannedGridLayoutManager(this,orient = RecyclerView.HORIZONTAL, spans =2,ratio = 0.8f)
-        spannedGridLayoutManager.itemOrderIsStable = false
+        spannedGridLayoutManager.itemOrderIsStable = true
 
         recyclerview.itemAnimator = null
         recyclerview.layoutManager = spannedGridLayoutManager
@@ -59,7 +59,7 @@ class MainActivity: AppCompatActivity() {
                   SpanSize(2, 2)
               }
         }?.also {
-            it.usesCache = false
+            it.usesCache = true
         }
         val dragFlags = ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
         mItemTouchHelper =   ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(dragFlags, 0) {
