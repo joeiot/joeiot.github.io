@@ -28,7 +28,7 @@ afterEvaluate {
 ext {
 
     package_name = 'com.arasthel'
-    artifactVersion = '3.0.4_2021_03_24_6_SNAPSHOT'//release包发布的版本
+    artifactVersion = '3.0.4_2021_03_27_1_SNAPSHOT'//release包发布的版本
     curFlavor = 'moorgen'
 
     artifactGroup = "spannedgridlayoutmanager"

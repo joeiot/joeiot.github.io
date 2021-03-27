@@ -21,7 +21,7 @@ class MainActivity: AppCompatActivity() {
 
         setContentView(R.layout.activity_main)
 
-        val spannedGridLayoutManager = SpannedGridLayoutManager(this,orient = RecyclerView.HORIZONTAL, spans =2,ratio = 0.8f)
+        val spannedGridLayoutManager = SpannedGridLayoutManager(this, RecyclerView.HORIZONTAL, spans =2,ratio = 0.8f)
         spannedGridLayoutManager.itemOrderIsStable = true
 
         recyclerview.itemAnimator = null
@@ -67,7 +67,6 @@ class MainActivity: AppCompatActivity() {
                 val fromPosition = viewHolder.adapterPosition
                 val toPosition = target.adapterPosition
                 return if(fromPosition > -1 && toPosition > -1 && fromPosition < recyclerview.adapter?.itemCount ?: 0 && toPosition < recyclerview.adapter?.itemCount ?: 0){
-
                     adapter.swap(fromPosition,toPosition)
                     true
                 }else{

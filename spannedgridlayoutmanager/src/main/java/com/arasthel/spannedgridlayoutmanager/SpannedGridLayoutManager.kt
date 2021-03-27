@@ -26,8 +26,7 @@ import kotlin.Comparator
  * @param spans How many spans does the layout have per row or column
  */
 open class SpannedGridLayoutManager(val context: Context, val orient: Int,
-                                    val spans: Int, val ratio: Float = 1.0f,
-                                    reverseLayout: Boolean = false) : LinearLayoutManager(context, orient, reverseLayout){
+                                    val spans: Int, val ratio: Float = 1.0f) : LinearLayoutManager(context,orient,false){
 
 
     /**
@@ -42,7 +41,6 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
     //==============================================================================================
     //  ~ Properties
     //==============================================================================================
-
     /**
      * Current scroll amount
      */
@@ -242,10 +240,8 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
 
         for (i in 0 until state.itemCount) {
             val spanSize = spanSizeLookup?.getSpanSize(i) ?: SpanSize(1, 1)
-            var childRect = rectsHelper.findRect(i, spanSize)
-            childRect?.apply {
-                rectsHelper.pushRect(i, childRect)
-            }?:break
+            val childRect = rectsHelper.findRect(i, spanSize)
+            rectsHelper.pushRect(i, childRect)
         }
 
         if (DEBUG) {
@@ -271,19 +267,20 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
 
         recycleChildrenOutOfBounds(Direction.END, recycler)
 
-        // Check if after changes in layout we aren't out of its bounds
-        val overScroll = scroll + size - layoutEnd - getPaddingEndForOrientation()
+//        // Check if after changes in layout we aren't out of its bounds
+        val overScroll =  scroll + size - layoutEnd - getPaddingEndForOrientation()
         val curPositions = (0 until childCount).map { getPosition(getChildAt(it)!!) }
         val isLastItemInScreen = curPositions.contains(itemCount - 1)
         val allItemsInScreen = itemCount == 0 || (firstVisiblePosition == 0 && isLastItemInScreen)
         if(DEBUG)
         {
-            debugLog("onLayoutChildren,size:$size,scroll:$scroll,layoutEnd:$layoutEnd  overScroll:$overScroll" +
-                    "childCount:$childCount isLastItemInScreen:$isLastItemInScreen " +
-                    "allItemsInScreen:$allItemsInScreen")
+            debugLog("onLayoutChildren,size:$size,scroll:$scroll,layoutEnd:$layoutEnd , overScroll:$overScroll" +
+                    "childCount:$childCount , isLastItemInScreen:$isLastItemInScreen " +
+                    "allItemsInScreen:$allItemsInScreen ,lastVisiblePosition:$lastVisiblePosition" +
+                    " firstVisiblePosition:$firstVisiblePosition ")
+
         }
         if (!allItemsInScreen && overScroll > 0) {
-//         if (!allItemsInScreen) {
             // If we are, fix it
             scrollBy(overScroll, state)
 
@@ -558,10 +555,16 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
     }
 
     override fun scrollHorizontallyBy(dx: Int, recycler: RecyclerView.Recycler, state: RecyclerView.State): Int {
+        if(DEBUG){
+            debugLog("scrollHorizontallyBy dx = $dx")
+        }
         return scrollBy(dx, recycler, state)
     }
 
     override fun scrollVerticallyBy(dy: Int, recycler: RecyclerView.Recycler, state: RecyclerView.State): Int {
+        if(DEBUG){
+            debugLog("scrollHorizontallyBy dy = $dy")
+        }
         return scrollBy(dy, recycler, state)
     }
 
@@ -571,13 +574,11 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
             return 0
         }
 
-        val canScrollBackwards = (firstVisiblePosition) >= 0 &&
-                0 < scroll &&
-                delta < 0
+        val canScrollBackwards = (firstVisiblePosition) >= 0 && 0 < scroll && delta < 0
 
         val canScrollForward = (firstVisiblePosition + childCount) <= state.itemCount &&
-                (scroll + size) < (layoutEnd + rectsHelper.itemSize + getPaddingEndForOrientation())
-        delta > 0
+                ((scroll + size) < (layoutEnd + /*rectsHelper.itemSize + */ getPaddingEndForOrientation())) &&
+                delta > 0
 
         // If can't scroll forward or backwards, return
         if (!(canScrollBackwards || canScrollForward)) {
@@ -602,7 +603,7 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
         val paddingEndLayout = getPaddingEndForOrientation()
 
         val start = 0
-        val end = layoutEnd /*+ rectsHelper.itemSize*/ + paddingEndLayout
+        val end = layoutEnd /*+ rectsHelper.itemSize */ + paddingEndLayout
 
         scroll -= distance
 
@@ -909,7 +910,10 @@ open class RectsHelper(val layoutManager: SpannedGridLayoutManager,
 
     }
 
-     val rows = mutableMapOf<Int, Set<Int>>()
+    /**
+     * cache each grid cell adapter position
+     */
+    val rows = mutableMapOf<Int, Set<Int>>()
 
     /**
      * Cache of rects that are already used
@@ -987,22 +991,20 @@ open class RectsHelper(val layoutManager: SpannedGridLayoutManager,
     /**
      * Get a free rect for the given span and item position
      */
-    fun findRect(position: Int, spanSize: SpanSize): Rect? {
+    fun findRect(position: Int, spanSize: SpanSize): Rect {
         return rectsCache[position] ?:findRectForSpanSize(spanSize)
     }
 
     /**
      * Find a valid free rect for the given span size
      */
-    protected open fun findRectForSpanSize(spanSize: SpanSize): Rect? {
-        var lane = freeRects.firstOrNull() {
+    protected open fun findRectForSpanSize(spanSize: SpanSize): Rect {
+        val lane = freeRects.first() {
             val itemRect = Rect(it.left, it.top, it.left + spanSize.width, it.top + spanSize.height)
             it.contains(itemRect)
         }
 
-        return lane?.let { lane ->
-            Rect(lane.left, lane.top, lane.left + spanSize.width, lane.top + spanSize.height)
-        }
+        return Rect(lane.left, lane.top, lane.left + spanSize.width, lane.top + spanSize.height)
     }
 
     /**
