@@ -268,7 +268,7 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
         recycleChildrenOutOfBounds(Direction.END, recycler)
 
 //        // Check if after changes in layout we aren't out of its bounds
-        val overScroll =  scroll + size - layoutEnd - getPaddingEndForOrientation()
+        val overScroll =  if(scroll == 0) 0 else scroll + size - layoutEnd - getPaddingEndForOrientation()
         val curPositions = (0 until childCount).map { getPosition(getChildAt(it)!!) }
         val isLastItemInScreen = curPositions.contains(itemCount - 1)
         val allItemsInScreen = itemCount == 0 || (firstVisiblePosition == 0 && isLastItemInScreen)
