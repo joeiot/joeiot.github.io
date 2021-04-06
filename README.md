@@ -26,9 +26,9 @@ When you create a new `SpannedGridLayoutManager` you must provide:
 **Kotlin** Example:
 
 ```kotlin
-val spannedGridLayoutManager = SpannedGridLayoutManager(
-                orientation = SpannedGridLayoutManager.Orientation.VERTICAL, 
-                spans = 4)
+val spannedGridLayoutManager = SpannedGridLayoutManager(context,
+                orient = RecycleView.VERTICAL,
+                spans = 4,ratio = 0.8f)
 ```
 
 **Java** Example:

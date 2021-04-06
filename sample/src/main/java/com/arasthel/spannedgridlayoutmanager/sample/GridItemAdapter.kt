@@ -10,8 +10,6 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.arasthel.spannedgridlayoutmanager.SpanSize
-import org.lucasr.twowayview.widget.SpannableGridLayoutManager
 import java.util.*
 
 /**

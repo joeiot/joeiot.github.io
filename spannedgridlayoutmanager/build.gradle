@@ -103,6 +103,6 @@ afterEvaluate {
 
 
 // Bintray Upload
-apply from: '../gradle/tools/bintrayv1.gradle'
-apply from: '../gradle/tools/installv1.gradle'
+//apply from: '../gradle/tools/bintrayv1.gradle'
+//apply from: '../gradle/tools/installv1.gradle'
 apply from: '../local-maven.gradle'

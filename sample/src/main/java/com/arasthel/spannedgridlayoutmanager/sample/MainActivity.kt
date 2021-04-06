@@ -5,8 +5,8 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.arasthel.spannedgridlayoutmanager.SpanSize
-import com.arasthel.spannedgridlayoutmanager.SpannedGridLayoutManager
+import com.joeiot.spannedgridlayoutmanager.SpanSize
+import com.joeiot.spannedgridlayoutmanager.SpannedGridLayoutManager
 
 /**
  * Created by Jorge Martín on 24/5/17.

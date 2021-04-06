@@ -30,6 +30,4 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
 
     implementation project(':spannedgridlayoutmanager')
-    implementation 'org.lucasr.twowayview:core:1.0.0_2020_12_15_1_SNAPSHOT'
-    implementation 'org.lucasr.twowayview:layouts:1.0.0_2020_12_15_1_SNAPSHOT'
 }
