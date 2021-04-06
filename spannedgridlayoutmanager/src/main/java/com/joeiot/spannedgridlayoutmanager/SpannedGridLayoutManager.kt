@@ -2,7 +2,7 @@
  * Copyright © 2017 Jorge Martín Espinosa
  */
 
-package com.arasthel.spannedgridlayoutmanager
+package com.joeiot.spannedgridlayoutmanager
 
 import android.content.Context
 import android.graphics.PointF
@@ -19,7 +19,7 @@ import java.util.*
 import kotlin.Comparator
 
 /**
- * A [android.support.v7.widget.RecyclerView.LayoutManager] which layouts and orders its views
+ * A [androidx.recyclerview.widget.RecyclerView.LayoutManager] which layouts and orders its views
  * based on width and height spans.
  *
  * @param orientation Whether the views will be layouted and scrolled in vertical or horizontal

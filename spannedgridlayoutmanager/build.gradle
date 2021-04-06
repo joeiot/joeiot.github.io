@@ -27,8 +27,8 @@ afterEvaluate {
 
 ext {
 
-    package_name = 'com.arasthel'
-    artifactVersion = '3.0.4_2021_03_27_2_SNAPSHOT'//release包发布的版本
+    package_name = 'com.joeiot'
+    artifactVersion = '4.0.0_2021_04_06_1_SNAPSHOT'//release包发布的版本
     curFlavor = 'moorgen'
 
     artifactGroup = "spannedgridlayoutmanager"
@@ -38,21 +38,21 @@ ext {
     bintrayRepo = 'maven'
     bintrayName = 'spannedgridlayoutmanager'
 
-    publishedGroupId = 'com.arasthel'
+    publishedGroupId = 'com.joeiot'
     libraryName = 'SpannedGridLayoutManager'
     artifact = 'spannedgridlayoutmanager'
     artifactGroup
 
     libraryDescription = 'A layout manager that will resize and reorder views based on a provided SpanSize.'
 
-    siteUrl = 'https://github.com/Arasthel/SpannedGridLayoutManager'
-    gitUrl = 'https://github.com/Arasthel/SpannedGridLayoutManager.git'
+    siteUrl = 'https://github.com/joegana/SpannedGridLayoutManager'
+    gitUrl = 'https://github.com/joegana/SpannedGridLayoutManager.git'
 
-    libraryVersion = '3.0.2'
+    libraryVersion = '4.0.0'
 
-    developerId = 'Arasthel'
-    developerName = 'Jorge Martín Epsinosa'
-    developerEmail = 'jorgemartinespinosa@gmail.com'
+    developerId = 'joegana'
+    developerName = 'joegana'
+    developerEmail = 'joegana@126.com'
 
     licenseName = 'MIT'
     licenseUrl = 'https://opensource.org/licenses/MIT'
@@ -103,6 +103,6 @@ afterEvaluate {
 
 
 // Bintray Upload
-//apply from: '../gradle/tools/bintrayv1.gradle'
-//apply from: '../gradle/tools/installv1.gradle'
+apply from: '../gradle/tools/bintrayv1.gradle'
+apply from: '../gradle/tools/installv1.gradle'
 apply from: '../local-maven.gradle'

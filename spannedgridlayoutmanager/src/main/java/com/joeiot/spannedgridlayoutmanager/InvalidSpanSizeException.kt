@@ -1,4 +1,4 @@
-package com.arasthel.spannedgridlayoutmanager
+package com.joeiot.spannedgridlayoutmanager
 
 /**
  * Exception thrown when the SpanSize of the item is smaller than 1 or bigger than the layout

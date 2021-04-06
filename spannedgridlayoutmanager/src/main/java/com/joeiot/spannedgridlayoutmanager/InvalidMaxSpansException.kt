@@ -2,7 +2,7 @@
  * Copyright © 2017 Jorge Martín Espinosa
  */
 
-package com.arasthel.spannedgridlayoutmanager
+package com.joeiot.spannedgridlayoutmanager
 
 /**
  * Exception thrown when the span size of the layout manager is 0 or negative

@@ -2,7 +2,7 @@
  * Copyright © 2017 Jorge Martín Espinosa
  */
 
-package com.arasthel.spannedgridlayoutmanager
+package com.joeiot.spannedgridlayoutmanager
 
 import android.graphics.Rect
 
