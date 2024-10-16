@@ -16,14 +16,14 @@ publishing {
     }
 }
 artifactory {
-    contextUrl  = "${artifactory_contextUrl}"
+    contextUrl  = "${ARTIFACTORY_CONTEXTURL}"
     publish {
         repository {
             // The Artifactory repository key to publish to
             repoKey = (artifactVersion.endsWith('SNAPSHOT') || artifactVersion.endsWith('snapshot'))  ? 'mg-app-libs-snapshot' : 'mg-app-libs-release'
-            username = "${artifactory_user}" // The publisher user name
-            password = "${artifactory_password}" // The publisher password
-            maven = true
+            username = "${ARTIFACTORY_USER}" // The publisher user name
+            password = "${ARTIFACTORY_PASSWORD}" // The publisher password
+//            maven = true
         }
         defaults {
             publishArtifacts = true
@@ -32,13 +32,13 @@ artifactory {
             publishIvy = false //Publish generated Ivy descriptor files to Artifactory (true by default)
         }
     }
-    resolve {
-        repository {
-            repoKey = 'jcenter'
-            username = "${artifactory_user}" // The resolver user name
-            password = "${artifactory_password}" // The resolver password
-        }
-    }
+//    resolve {
+//        repository {
+//            repoKey = 'jcenter'
+//            username = "${ARTIFACTORY_USER}" // The resolver user name
+//            password = "${ARTIFACTORY_PASSWORD}" // The resolver password
+//        }
+//    }
 }
 
 

@@ -4,13 +4,14 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.arasthel.spannedgridlayoutmanager.sample.SpannedGridLayoutManager.SpanInfo
+import om.arasthel.spannedgridlayoutmanager.sample.R
 
 /**
  * Created by Jorge Martín on 24/5/17.
  */
 class MainActivity1: AppCompatActivity() {
 
-    val recyclerview: RecyclerView by lazy { findViewById<RecyclerView>(R.id.recyclerView) }
+    val recyclerview: RecyclerView by lazy { findViewById(R.id.recyclerView) }
 
     override fun onCreate(savedInstanceState: android.os.Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,7 +49,7 @@ class MainActivity1: AppCompatActivity() {
         recyclerview.adapter = adapter
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
         outState?.putBooleanArray("clicked", (recyclerview.adapter as GridItemAdapter).clickedItems.toBooleanArray())

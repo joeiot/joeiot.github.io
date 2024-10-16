@@ -13,19 +13,19 @@ object ViewUtils {
             animator2 = ObjectAnimator.ofFloat(newView, "rotationX", 90f, 0f)
         }
         animator1.addListener(object : Animator.AnimatorListener {
-            override fun onAnimationStart(animation: Animator?) {
+            override fun onAnimationStart(animation: Animator) {
             }
 
-            override fun onAnimationEnd(animation: Animator?) {
+            override fun onAnimationEnd(animation: Animator) {
                 oldView.visibility = View.GONE;
                 animator2.setDuration(time).start()
                 newView.visibility = View.VISIBLE;
             }
 
-            override fun onAnimationCancel(animation: Animator?) {
+            override fun onAnimationCancel(animation: Animator) {
             }
 
-            override fun onAnimationRepeat(animation: Animator?) {
+            override fun onAnimationRepeat(animation: Animator) {
             }
         })
         animator1.setDuration(time).start();
@@ -39,18 +39,18 @@ object ViewUtils {
             animator2 = ObjectAnimator.ofFloat(newView, "rotationY", 90f, 0f)
         }
         animator1.addListener(object : Animator.AnimatorListener {
-            override fun onAnimationStart(animation: Animator?) {
+            override fun onAnimationStart(animation: Animator) {
             }
-            override fun onAnimationEnd(animation: Animator?) {
+            override fun onAnimationEnd(animation: Animator) {
                 oldView.visibility = View.GONE;
                 animator2.setDuration(time).start()
                 newView.visibility = View.VISIBLE;
             }
 
-            override fun onAnimationCancel(animation: Animator?) {
+            override fun onAnimationCancel(animation: Animator) {
             }
 
-            override fun onAnimationRepeat(animation: Animator?) {
+            override fun onAnimationRepeat(animation: Animator) {
             }
         })
         animator1.setDuration(time).start();

@@ -543,7 +543,7 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
     }
 
     override fun computeHorizontalScrollRange(state: RecyclerView.State): Int {
-        return state.itemCount
+        return super.computeHorizontalScrollRange(state)
     }
 
     override fun canScrollVertically(): Boolean {

@@ -29,6 +29,7 @@ import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
+import om.arasthel.spannedgridlayoutmanager.sample.R;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -28,7 +28,7 @@ afterEvaluate {
 ext {
 
     package_name = 'com.joeiot'
-    artifactVersion = '4.0.0_2021_04_06_1_SNAPSHOT'//release包发布的版本
+    artifactVersion = '4.0.0_2022_06_18_1_SNAPSHOT'//release包发布的版本
     curFlavor = 'moorgen'
 
     artifactGroup = "spannedgridlayoutmanager"
@@ -60,12 +60,11 @@ ext {
 }
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion buildtools_version
-
+    compileSdk 33
+    namespace "com.joeiot.spannedgridlayoutmanager"
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 28
+        targetSdk 33
         versionCode 1
         versionName libraryVersion
     }
@@ -74,6 +73,15 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
     }
 }
 
@@ -88,8 +96,11 @@ dependencies {
 
 task generateSourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
-    classifier 'sources'
+    var src =  'sources'
+    archiveClassifier.convention(src)
+    archiveClassifier.set(src)
 }
+
 
 afterEvaluate {
     if(!artifactVersion.endsWith('SNAPSHOT') && !artifactVersion.endsWith('snapshot')){

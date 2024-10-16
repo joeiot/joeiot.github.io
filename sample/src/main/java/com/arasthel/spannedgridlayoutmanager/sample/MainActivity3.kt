@@ -5,13 +5,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import om.arasthel.spannedgridlayoutmanager.sample.R
 
 /**
  * Created by Jorge Martín on 24/5/17.
  */
 class MainActivity3: AppCompatActivity() {
 
-    val recyclerview: RecyclerView by lazy { findViewById<RecyclerView>(R.id.recyclerView) }
+    val recyclerview: RecyclerView by lazy { findViewById(R.id.recyclerView) }
     private var mItemTouchHelper:ItemTouchHelper? = null
 
     override fun onCreate(savedInstanceState: android.os.Bundle?) {
@@ -68,7 +69,7 @@ class MainActivity3: AppCompatActivity() {
         recyclerview.adapter = adapter
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
         outState?.putBooleanArray("clicked", (recyclerview.adapter as GridItemAdapter).clickedItems.toBooleanArray())

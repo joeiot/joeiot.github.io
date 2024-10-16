@@ -1,16 +1,15 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'kotlin-android-extensions'
 
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion buildtools_version
+    compileSdk 33
+    namespace "om.arasthel.spannedgridlayoutmanager.sample"
     defaultConfig {
         applicationId "com.arasthel.spannedgridlayoutmanager.sample"
         minSdkVersion 14
-        targetSdkVersion 28
+        targetSdk 33
         versionCode 1
         versionName "1.0"
     }
@@ -19,6 +18,15 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
     }
 }
 

@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.joeiot.spannedgridlayoutmanager.SpanSize
 import com.joeiot.spannedgridlayoutmanager.SpannedGridLayoutManager
+import om.arasthel.spannedgridlayoutmanager.sample.R
 
 /**
  * Created by Jorge Martín on 24/5/17.
@@ -81,7 +82,7 @@ class MainActivity: AppCompatActivity() {
         recyclerview.adapter = adapter
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
         outState?.putBooleanArray("clicked", (recyclerview.adapter as GridItemAdapter).clickedItems.toBooleanArray())
