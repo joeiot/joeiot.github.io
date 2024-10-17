@@ -22,7 +22,7 @@ import kotlin.Comparator
  * A [androidx.recyclerview.widget.RecyclerView.LayoutManager] which layouts and orders its views
  * based on width and height spans.
  *
- * @param orientation Whether the views will be layouted and scrolled in vertical or horizontal
+ * @param orient Whether the views will be layouted and scrolled in vertical or horizontal
  * @param spans How many spans does the layout have per row or column
  */
 open class SpannedGridLayoutManager(val context: Context, val orient: Int,
@@ -272,14 +272,17 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
         val curPositions = (0 until childCount).map { getPosition(getChildAt(it)!!) }
         val isLastItemInScreen = curPositions.contains(itemCount - 1)
         val allItemsInScreen = itemCount == 0 || (firstVisiblePosition == 0 && isLastItemInScreen)
-        if(DEBUG)
-        {
-            debugLog("onLayoutChildren,size:$size,scroll:$scroll,layoutEnd:$layoutEnd , overScroll:$overScroll" +
-                    "childCount:$childCount , isLastItemInScreen:$isLastItemInScreen " +
-                    "allItemsInScreen:$allItemsInScreen ,lastVisiblePosition:$lastVisiblePosition" +
-                    " firstVisiblePosition:$firstVisiblePosition ")
 
+        if(DEBUG) {
+            debugLog(
+                "onLayoutChildren:size:$size,scroll:$scroll,layoutEnd:$layoutEnd , overScroll:$overScroll" +
+                        "childCount:$childCount , isLastItemInScreen:$isLastItemInScreen " +
+                        "allItemsInScreen:$allItemsInScreen ,lastVisiblePosition:$lastVisiblePosition" +
+                        " firstVisiblePosition:$firstVisiblePosition "
+            )
         }
+
+
         if (!allItemsInScreen && overScroll > 0) {
             // If we are, fix it
             scrollBy(overScroll, state)
@@ -318,8 +321,6 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
        var layout = (view.layoutParams as RecyclerView.LayoutParams)
         // This rect contains just the row and column number - i.e.: [0, 0, 1, 1]
         var rect = freeRectsHelper.findRect(position, spanSize)
-
-        rect?:return
 
         if(DEBUG) {
             debugLog("measureChild,position = $position,$spanSize \r\n" +
@@ -417,9 +418,7 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
         if (newLayoutEnd > layoutEnd) {
             layoutEnd = newLayoutEnd
         }
-
-        if(DEBUG)
-        {
+        if(DEBUG) {
             debugLog("updateEdgesWithNewChild,layoutStart:$layoutStart layoutEnd:$layoutEnd")
         }
     }
@@ -457,7 +456,7 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
             }
         }
 
-        if(DEBUG){
+        if(DEBUG) {
             debugLog("recycleChildrenFromStart count:${toDetach.size}")
         }
 
@@ -484,8 +483,7 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
                 toDetach.add(child)
             }
         }
-
-        if(DEBUG){
+        if(DEBUG) {
             debugLog("recycleChildrenFromEnd count:${toDetach.size}")
         }
 
@@ -508,8 +506,7 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
             layoutEnd = getPaddingStartForOrientation() + childStart
         }
 
-        if(DEBUG)
-        {
+        if(DEBUG) {
             debugLog("updateEdgesWithRemovedChild,layoutStart:$layoutStart layoutEnd:$layoutEnd")
         }
     }
@@ -555,17 +552,19 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
     }
 
     override fun scrollHorizontallyBy(dx: Int, recycler: RecyclerView.Recycler, state: RecyclerView.State): Int {
-        if(DEBUG){
-            debugLog("scrollHorizontallyBy dx = $dx")
+        var distance =  scrollBy(dx, recycler, state)
+        if(DEBUG) {
+            debugLog("scrollHorizontallyBy dx = $dx , distanceTraveled = $distance")
         }
-        return scrollBy(dx, recycler, state)
+        return distance
     }
 
     override fun scrollVerticallyBy(dy: Int, recycler: RecyclerView.Recycler, state: RecyclerView.State): Int {
-        if(DEBUG){
-            debugLog("scrollHorizontallyBy dy = $dy")
+        var distance =  scrollBy(dy, recycler, state)
+        if(DEBUG) {
+            debugLog("scrollVerticallyBy dy = $dy ,distanceTraveled = $distance ")
         }
-        return scrollBy(dy, recycler, state)
+        return  distance
     }
 
     protected open fun scrollBy(delta: Int, recycler: RecyclerView.Recycler, state: RecyclerView.State): Int {
@@ -574,14 +573,19 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
             return 0
         }
 
-        val canScrollBackwards = (firstVisiblePosition) >= 0 && 0 < scroll && delta < 0
+        val fv = firstVisiblePosition
+        val cc = childCount
+        val backwards = fv >= 0 && 0 < scroll && delta < 0
 
-        val canScrollForward = (firstVisiblePosition + childCount) <= state.itemCount &&
+        val forward = (fv + cc) <= state.itemCount &&
                 ((scroll + size) < (layoutEnd + /*rectsHelper.itemSize + */ getPaddingEndForOrientation())) &&
                 delta > 0
 
         // If can't scroll forward or backwards, return
-        if (!(canScrollBackwards || canScrollForward)) {
+        if (!(backwards || forward)) {
+            if(DEBUG) {
+                debugLog("backwards:$backwards,forward:$forward,scroll:${scroll},layoutEnd:${layoutEnd},sItemCount:${state.itemCount}")
+            }
             return 0
         }
 
@@ -621,7 +625,7 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
             scroll = end - size
         }
 
-        if(DEBUG){
+        if(DEBUG) {
             debugLog("isVertical:${orientation == RecyclerView.VERTICAL}  offsetChildren:$correctedDistance")
         }
 
@@ -820,7 +824,9 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
 
     override fun onSaveInstanceState(): Parcelable? {
         return if (itemOrderIsStable && childCount > 0) {
-            debugLog("Saving first visible position: $firstVisiblePosition")
+            if(DEBUG) {
+                debugLog("Saving first visible position: $firstVisiblePosition")
+            }
             SavedState(firstVisiblePosition)
         } else {
             null
@@ -828,7 +834,9 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
     }
 
     override fun onRestoreInstanceState(state: Parcelable) {
-        debugLog("Restoring state")
+        if(DEBUG) {
+            debugLog("Restoring state")
+        }
         val savedState = state as? SavedState
         if (savedState != null) {
             val firstVisibleItem = savedState.firstVisibleItem
@@ -838,7 +846,7 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
 
     companion object {
         const val TAG = "SpannedGridLayoutMan"
-        const val DEBUG = true
+        val DEBUG = BuildConfig.DEBUG
 
         fun debugLog(message: String) {
             if (DEBUG) Log.d(TAG, message)
