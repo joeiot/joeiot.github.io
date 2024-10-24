@@ -28,7 +28,7 @@ afterEvaluate {
 ext {
 
     package_name = 'com.joeiot'
-    artifactVersion = '4.0.0_2024_10_23_2_SNAPSHOT'//release包发布的版本
+    artifactVersion = '4.1.0_2024_10_24_1'//release包发布的版本
     curFlavor = 'moorgen'
 
     artifactGroup = "spannedgridlayoutmanager"
@@ -107,12 +107,12 @@ task generateSourcesJar(type: Jar) {
 
 
 afterEvaluate {
-    if(!artifactVersion.endsWith('SNAPSHOT') && !artifactVersion.endsWith('snapshot')){
-        tasks.matching {
-            (it.name.endsWith('artifactoryPublish') | it.name.startWith("publishAar"))
-        }.each { tk ->
-            tk.dependsOn('assembleRelease', 'generateSourcesJar')
-        }
+    logger.quiet("当前version:{}",artifactVersion)
+    def snapShortVer = artifactVersion.endsWith('SNAPSHOT') || artifactVersion.endsWith('snapshot')
+    tasks.matching {
+        (it.name.endsWith('artifactoryPublish') || it.name.endsWith('publishAarPublicationToMavenLocal'))
+    }.each { tk ->
+        tk.dependsOn("assemble${snapShortVer?'Debug':'Release'}", "generateSourcesJar")
     }
 }
 
