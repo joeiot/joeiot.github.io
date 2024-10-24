@@ -28,7 +28,7 @@ afterEvaluate {
 ext {
 
     package_name = 'com.joeiot'
-    artifactVersion = '4.0.0_2024_10_17_1_SNAPSHOT'//release包发布的版本
+    artifactVersion = '4.0.0_2024_10_23_2_SNAPSHOT'//release包发布的版本
     curFlavor = 'moorgen'
 
     artifactGroup = "spannedgridlayoutmanager"

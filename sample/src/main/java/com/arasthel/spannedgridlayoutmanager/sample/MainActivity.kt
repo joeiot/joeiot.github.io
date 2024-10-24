@@ -1,7 +1,6 @@
 package com.arasthel.spannedgridlayoutmanager.sample
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -22,13 +21,15 @@ class MainActivity: AppCompatActivity() {
 
         setContentView(R.layout.activity_main)
 
-        val spannedGridLayoutManager = SpannedGridLayoutManager(this, RecyclerView.HORIZONTAL, spans =2,ratio = 0.8f)
+        val spannedGridLayoutManager = SpannedGridLayoutManager(this, RecyclerView.HORIZONTAL, spans =3,ratio = 1.0f)
         spannedGridLayoutManager.itemOrderIsStable = true
 
         recyclerview.itemAnimator = null
         recyclerview.layoutManager = spannedGridLayoutManager
-
-        recyclerview.addItemDecoration(SpaceItemDecorator(left = 12, top = 12, right = 12, bottom = 12))
+        val margin16 = resources.getDimensionPixelSize(R.dimen.margin16)
+        if ((recyclerview?.itemDecorationCount) == 0) {
+            recyclerview?.addItemDecoration(SpaceItemDecorator(margin16, margin16, margin16, margin16))
+        }
 
         val adapter = GridItemAdapter()
         adapter.setHasStableIds(false)
@@ -47,18 +48,19 @@ class MainActivity: AppCompatActivity() {
 //                }
 //            SpanSize(1, 1)
               var d = adapter.getItem(position).toInt()
-               if(d == 50){
-                   Log.d("xxx","")
-               }
-              if(d%3 == 0){
-                 SpanSize(1, 1)
-             }else  if(d % 3 == 1){
+//               if(d == 50){
+//                   Log.d("xxx","")
+//               }
+             if(d%4 == 0){
+                SpanSize(1, 1)
+             }
+             else  if(d % 4 == 1){
                  SpanSize(1, 2)
-             }else if(d % 3 == 2){
+             }else if(d % 4 == 2){
                  SpanSize(2, 1)
-             }else{
+             } else {
                   SpanSize(2, 2)
-              }
+             }
         }?.also {
             it.usesCache = true
         }

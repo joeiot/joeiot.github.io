@@ -15,7 +15,6 @@ import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
-import java.util.*
 import kotlin.Comparator
 
 /**
@@ -56,7 +55,8 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
      */
     open val firstVisiblePosition: Int get() {
         if (childCount == 0) { return 0 }
-        return getPosition(getChildAt(0)!!)
+//        return getPosition(getChildAt(0)!!)
+        return findFirstVisibleItemPosition()
     }
 
     /**
@@ -64,7 +64,8 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
      */
     open val lastVisiblePosition: Int get() {
         if (childCount == 0) { return 0 }
-        return getPosition(getChildAt(childCount - 1)!!)
+//        return getPosition(getChildAt(childCount - 1)!!)
+        return  findLastVisibleItemPosition()
     }
 
     /**
@@ -246,7 +247,7 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
 
         if (DEBUG) {
             val elapsed = System.currentTimeMillis() - start
-            debugLog("Span cached,Elapsed time: $elapsed ms")
+            debugLog("onLayoutChildren:Span cached,Elapsed time: $elapsed ms")
         }
 
         // Restore scroll position based on first visible view
@@ -257,6 +258,9 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
 
             if (currentRow != null) {
                 scroll = getPaddingStartForOrientation() + currentRow * rectsHelper.itemSize
+                if(DEBUG){
+                    debugLog("onLayoutChildren, current scroll: $scroll")
+                }
             }
 
             this.pendingScrollToPosition = null
@@ -552,6 +556,9 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
     }
 
     override fun scrollHorizontallyBy(dx: Int, recycler: RecyclerView.Recycler, state: RecyclerView.State): Int {
+        if(orientation == RecyclerView.VERTICAL){
+            return 0
+        }
         var distance =  scrollBy(dx, recycler, state)
         if(DEBUG) {
             debugLog("scrollHorizontallyBy dx = $dx , distanceTraveled = $distance")
@@ -560,6 +567,9 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
     }
 
     override fun scrollVerticallyBy(dy: Int, recycler: RecyclerView.Recycler, state: RecyclerView.State): Int {
+        if(orientation == RecyclerView.HORIZONTAL){
+            return 0
+        }
         var distance =  scrollBy(dy, recycler, state)
         if(DEBUG) {
             debugLog("scrollVerticallyBy dy = $dy ,distanceTraveled = $distance ")
@@ -569,23 +579,26 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
 
     protected open fun scrollBy(delta: Int, recycler: RecyclerView.Recycler, state: RecyclerView.State): Int {
         // If there are no view or no movement, return
-        if (delta == 0) {
+        if (delta == 0 || childCount == 0) {
             return 0
         }
 
         val fv = firstVisiblePosition
         val cc = childCount
         val backwards = fv >= 0 && 0 < scroll && delta < 0
+        val pEnd = getPaddingEndForOrientation()
+        val sz = size
 
-        val forward = (fv + cc) <= state.itemCount &&
-                ((scroll + size) < (layoutEnd + /*rectsHelper.itemSize + */ getPaddingEndForOrientation())) &&
+        val forward = /*(fv + cc) <= state.itemCount &&*/
+                ((scroll + sz) < (layoutEnd + /*rectsHelper.itemSize + */ pEnd)) &&
                 delta > 0
 
+        if(DEBUG) {
+            debugLog("scrollBy1:delta:${delta},bw:$backwards,fw:$forward," +
+                    "scroll:${scroll},layS:${layoutStart},layE:${layoutEnd},sCount:${state.itemCount},cc:${cc},fv:${fv},pEnd:${pEnd},sz:${sz}")
+        }
         // If can't scroll forward or backwards, return
         if (!(backwards || forward)) {
-            if(DEBUG) {
-                debugLog("backwards:$backwards,forward:$forward,scroll:${scroll},layoutEnd:${layoutEnd},sItemCount:${state.itemCount}")
-            }
             return 0
         }
 
@@ -620,13 +633,13 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
         }
 
         // Correct scroll if it would make the layout scroll out of bounds at the end
-        if (scroll + size > end && (firstVisiblePosition + childCount + spans) >= state.itemCount) {
+        if (scroll + size > end /*&& (firstVisiblePosition + childCount + spans) >= state.itemCount*/) {
             correctedDistance -= (end - scroll - size)
             scroll = end - size
         }
 
         if(DEBUG) {
-            debugLog("isVertical:${orientation == RecyclerView.VERTICAL}  offsetChildren:$correctedDistance")
+            debugLog("scrollBy2:horizon:${orientation == RecyclerView.HORIZONTAL}, offset:$correctedDistance,scroll:${scroll}")
         }
 
         if (orientation == RecyclerView.VERTICAL) {
@@ -637,6 +650,8 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
 
         return correctedDistance
     }
+
+
 
     override fun scrollToPosition(position: Int) {
         pendingScrollToPosition = position
@@ -849,7 +864,7 @@ open class SpannedGridLayoutManager(val context: Context, val orient: Int,
         val DEBUG = BuildConfig.DEBUG
 
         fun debugLog(message: String) {
-            if (DEBUG) Log.d(TAG, message)
+            Log.d(TAG, message)
         }
     }
 
@@ -1020,15 +1035,13 @@ open class RectsHelper(val layoutManager: SpannedGridLayoutManager,
      */
     fun pushRect(position: Int, rect: Rect) {
         val start = if (orientation == RecyclerView.VERTICAL)
-            rect.top else
-            rect.left
+            rect.top else rect.left
         val startRow = rows[start]?.toMutableSet() ?: mutableSetOf()
         startRow.add(position)
         rows[start] = startRow
 
         val end = if (orientation == RecyclerView.VERTICAL)
-            rect.bottom else
-            rect.right
+            rect.bottom else rect.right
         val endRow = rows[end - 1]?.toMutableSet() ?: mutableSetOf()
         endRow.add(position)
         rows[end - 1] = endRow

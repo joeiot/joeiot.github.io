@@ -99,7 +99,7 @@ class GridItemAdapter: RecyclerView.Adapter<GridItemViewHolder>() {
 //            0
 //        }
 //        return position
-        return getItem(position).toInt() % 3
+        return getItem(position).toInt() % 4
     }
 
     override fun getItemCount(): Int {
@@ -111,7 +111,8 @@ class GridItemAdapter: RecyclerView.Adapter<GridItemViewHolder>() {
        var layout = when (viewType) {
            0 -> R.layout.grid_item_normal
            1 -> R.layout.grid_item_normal_1_2
-           else -> R.layout.grid_item_normal_2_1
+           2 -> R.layout.grid_item_normal_2_1
+           else -> R.layout.grid_item_normal_2_2
       }
 
 //        var layout = when (viewType) {
